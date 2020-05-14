@@ -16,15 +16,15 @@ Include the folder in your Android Studio project as a module.
 ## Get Started
 
 Once you've included the Payload Java library in your project,
-include the `com.payload.pl` and `com.payload.android.Payload` namespace to get started.
+include the `co.payload.pl` and `co.payload.android.Payload` namespace to get started.
 
 All Payload objects and methods are accessible using the `pl` static class.
 
 For more information, please refer to the [Payload Java Libaray](https://github.com/payload-code/payload-java).
 
 ```java
-import com.payload.pl;
-import com.payload.android.Payload;
+import co.payload.pl;
+import co.payload.android.Payload;
 ```
 
 ### API Authentication
@@ -33,7 +33,7 @@ To authenticate with the Payload API, you'll need a live or test API key. API
 keys are accessible from within the Payload dashboard.
 
 ```java
-import com.payload.pl;
+import co.payload.pl;
 
 pl.api_key = "client_key_3bW9JMZtPVDOfFNzwRdfE";
 ```

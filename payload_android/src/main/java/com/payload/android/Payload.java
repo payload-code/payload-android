@@ -1,4 +1,4 @@
-package com.payload.android;
+package co.payload.android;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.*;
 
-import com.payload.arm.ARMRequest;
-import com.payload.arm.ARMObject;
+import co.payload.arm.ARMRequest;
+import co.payload.arm.ARMObject;
 
 public class Payload {
     private final static String TAG = Payload.class.getSimpleName();
