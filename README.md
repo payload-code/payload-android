@@ -1,4 +1,4 @@
-# Payload Android Library [BETA]
+# Payload Android Library
 
 An Android library for integrating [Payload](https://payload.co).
 
@@ -14,11 +14,16 @@ Include the folder in your Android Studio project as a module.
 ## Get Started
 
 Once you've included the Payload Java library in your project,
-include the `com.payload.pl` namespace to get started.
+include the `com.payload.pl` and `com.payload.android.Payload` namespace to get started.
 
 All Payload objects and methods are accessible using the `pl` static class.
 
 For more information, please refer to the [Payload Java Libaray](https://github.com/payload-code/payload-java).
+
+```java
+import com.payload.pl;
+import com.payload.android.Payload;
+```
 
 ### API Authentication
 
@@ -94,3 +99,8 @@ Payload.create(new pl.Customer(){{
     handleError(error);
 });
 ```
+
+## Documentation
+
+To get further information on Payload's Android library and API capabilities,
+visit the unabridged [Payload Documentation](https://docs.payload.co/).
