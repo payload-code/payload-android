@@ -4,6 +4,14 @@ An Android library for integrating [Payload](https://payload.co).
 
 ## Installation
 
+```
+dependencies {
+    implementation 'co.payload:payload-android:1.0'
+}
+```
+
+## Manual Installation
+
 ### 1) Download
 
 Download the [latest](https://github.com/payload-code/payload-android/archive/master.zip)

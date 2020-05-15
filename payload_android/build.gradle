@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 android {
     compileSdkVersion 28
@@ -33,5 +35,72 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'co.payload:payload:0.1.2'
 }
 
+
+group = 'co.payload'
+version = '1.0'
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "source"
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../javadoc/")
+    failOnError false
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from tasks.javadoc.destinationDir
+}
+//Creating sources with comments
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+artifacts {
+    archives javadocJar
+    archives androidSourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+            pom.project {
+                name 'Payload Android Library'
+                packaging 'aar'
+                description 'Android SDK for integrating Payload'
+                artifactId 'payload-android'
+                url 'https://github.com/payload-code/payload-android'
+                scm {
+                    url 'scm:git:git://github.com/payload-code/payload-android.git'
+                    connection 'scm:git:git://github.com/payload-code/payload-android.git'
+                    developerConnection 'scm:git:git://github.com/payload-code/payload-android.git'
+                }
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'payload'
+                        name 'Payload'
+                    }
+                }
+            }
+        }
+    }
+}
+signing {
+    useGpgCmd()
+    sign configurations.archives
+}
