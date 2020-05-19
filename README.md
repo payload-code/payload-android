@@ -62,7 +62,22 @@ Payload.checkout(new pl.Payment(){{
 
 ## Payment Form
 
-Use `Payload.form` for building a simple payment form in your app.
+Use `Payload.submit` and `Input` to build and submit a simple payment form in your app.
+
+### Add Inputs to Layout
+
+Add any `co.payload.android.Input` fields used in collecting payment details into your layout.
+The `android:tag` attribute can be any payment or payment method field, prefixed
+with `"pl:"`.
+
+```xml
+<co.payload.android.Input
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:tag="pl:card"/>
+```
+
+### Submit the Form
 
 ```java
 Payload.submit(view, new pl.Payment(){{
@@ -74,18 +89,6 @@ Payload.submit(view, new pl.Payment(){{
 });
 ```
 
-Add any `co.payload.android.Input` fields used in collecting payment details.
-The `android:tag` attribute can be any payment or payment method field, prefixed
-with `"pl:"`.
-
-```xml
-<co.payload.android.Input
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="-4dp"
-      android:layout_marginRight="-4dp"
-      android:tag="pl:card"/>
-```
 
 ## Interact with the API
 
