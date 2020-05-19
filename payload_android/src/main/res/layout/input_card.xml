@@ -1,0 +1,42 @@
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:orientation="horizontal">
+
+    <EditText
+     android:id="@+id/card_number"
+     android:layout_height="wrap_content"
+     android:layout_weight=".60"
+     android:layout_width="0dp"
+     android:hint="Card number"
+     android:layout_marginRight="-4dp"
+     android:tag="pl:card_number"
+     android:inputType="phone"/>
+
+
+    <EditText
+     android:id="@+id/expiry"
+     android:layout_height="wrap_content"
+     android:layout_weight=".25"
+     android:layout_width="0dp"
+     android:hint="MM/YY"
+     android:layout_marginLeft="-4dp"
+     android:layout_marginRight="-4dp"
+     android:tag="pl:expiry"
+     android:inputType="phone"/>
+
+
+    <EditText
+     android:id="@+id/cvv"
+     android:layout_height="wrap_content"
+     android:layout_weight=".15"
+     android:layout_width="0dp"
+     android:hint="CVV"
+     android:layout_marginLeft="-4dp"
+     android:tag="pl:card_code"
+     android:inputType="phone"/>
+
+</LinearLayout>
+

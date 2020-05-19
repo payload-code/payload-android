@@ -6,7 +6,7 @@ An Android library for integrating [Payload](https://payload.co).
 
 ```
 dependencies {
-    implementation 'co.payload:payload-android:1.0'
+    implementation 'co.payload:payload-android:1.1.5'
 }
 ```
 
@@ -46,6 +46,49 @@ import co.payload.pl;
 pl.api_key = "client_key_3bW9JMZtPVDOfFNzwRdfE";
 ```
 
+## Checkout
+
+Use `Payload.checkout` for integrating a simple checkout modal into your app.
+
+```java
+Payload.checkout(new pl.Payment(){{
+    set("amount", 10.0);
+}}).processed((pl.Payment pmt) -> {
+    handleSuccess(pmt);
+}).error((pl.Payment pmt) -> {
+    handleError(pmt);
+});
+```
+
+## Payment Form
+
+Use `Payload.form` for building a simple payment form in your app.
+
+```java
+Payload.submit(view, new pl.Payment(){{
+    set("amount", 10.0);
+}}).processed((pl.Payment pmt) -> {
+    handleSuccess(pmt);
+}).error((pl.Payment pmt) -> {
+    handleError(pmt);
+});
+```
+
+Add any `co.payload.android.Input` fields used in collecting payment details.
+The `android:tag` attribute can be any payment or payment method field, prefixed
+with `"pl:"`.
+
+```xml
+<co.payload.android.Input
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="-4dp"
+      android:layout_marginRight="-4dp"
+      android:tag="pl:card"/>
+```
+
+## Interact with the API
+
 ### Creating an Object
 
 
@@ -74,7 +117,7 @@ Payload.create(new pl.Payment(){{
 ```java
 // Create a Payment
 Payload.update(payment, pl.attr("status", "voided") )
-    .then(((pl.Payment voided) -> {
+    .then((pl.Payment voided) -> {
         handleVoid(payment);
     });
 ```
