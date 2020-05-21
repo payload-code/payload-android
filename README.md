@@ -6,7 +6,7 @@ An Android library for integrating [Payload](https://payload.co).
 
 ```
 dependencies {
-    implementation 'co.payload:payload-android:1.1.5'
+    implementation 'co.payload:payload-android:1.1.7'
 }
 ```
 
@@ -55,8 +55,8 @@ Payload.checkout(new pl.Payment(){{
     set("amount", 10.0);
 }}).processed((pl.Payment pmt) -> {
     handleSuccess(pmt);
-}).error((pl.Payment pmt) -> {
-    handleError(pmt);
+}).error((Exception err) -> {
+    handleError(err);
 });
 ```
 
@@ -84,8 +84,8 @@ Payload.submit(view, new pl.Payment(){{
     set("amount", 10.0);
 }}).processed((pl.Payment pmt) -> {
     handleSuccess(pmt);
-}).error((pl.Payment pmt) -> {
-    handleError(pmt);
+}).error((Exception err) -> {
+    handleError(err);
 });
 ```
 

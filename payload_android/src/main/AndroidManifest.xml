@@ -3,4 +3,14 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <application>
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+        <activity android:name="co.payload.android.GooglePayActivity"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:exported="true">
+        </activity>
+    </application>
+
 </manifest>

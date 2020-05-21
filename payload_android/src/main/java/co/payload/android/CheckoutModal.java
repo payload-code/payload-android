@@ -100,7 +100,7 @@ public class CheckoutModal extends DialogFragment {
 
          this.checkout.initForm();
 
-         this.checkout.error((Throwable err) -> {
+         this.checkout.error((Exception err) -> {
             loading.setVisibility(8);
             pay_btn.setEnabled(true);
          }).declined((pl.Payment pmt) -> {

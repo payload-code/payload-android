@@ -30,12 +30,16 @@ import co.payload.Utils;
 public class Payload {
     public final static String TAG = Payload.class.getSimpleName();
 
+    public interface Evt {
+        void callback();
+    }
+
     public interface Response<T> {
         void callback(T resp);
     }
 
     public interface Error {
-        void callback(Throwable err);
+        void callback(Exception err);
     }
 
     public static class BasePromise<T> {
@@ -55,11 +59,16 @@ public class Payload {
             return (T)this;
         }
 
+        public T started(final Evt callback) {
+            this.req.starting_cbs.add(callback);
+            return (T)this;
+        }
+
         public void success(Object obj) {
             this.req.success(obj);
         }
 
-        public void failure(Throwable err) {
+        public void failure(Exception err) {
             this.req.failure(err);
         }
 
@@ -71,20 +80,70 @@ public class Payload {
         }
     }
 
+    public static class PaymentPromise<T> extends BasePromise<T> {
+        List<Response> processed_cbs;
+        List<Response> declined_cbs;
+
+        private Boolean initialized = false;
+
+        public PaymentPromise(Req req) {
+            super(req);
+
+            this.processed_cbs = new ArrayList<Response>();
+            this.declined_cbs = new ArrayList<Response>();
+        }
+
+        private void init() {
+            initialized = true;
+            this.then((pl.Payment pmt) -> {
+                if (pmt.getStr("status").equals("processed")) {
+                    for ( int i = 0; i < this.processed_cbs.size(); i++ )
+                        this.processed_cbs.get(i).callback(pmt);
+                }
+
+                if (pmt.getStr("status").equals("declined"))  {
+                    for ( int i = 0; i < this.declined_cbs.size(); i++ )
+                        this.declined_cbs.get(i).callback(pmt);
+                }
+            });
+        }
+
+        public T processed(final Response<?> callback) {
+            if ( !initialized ) init();
+            this.processed_cbs.add(callback);
+            return (T)this;
+        }
+
+        public T declined(final Response<?> callback) {
+            if ( !initialized ) init();
+            this.declined_cbs.add(callback);
+            return (T)this;
+        }
+
+    }
+
     public static class Req {
         ARMObject obj      = null;
         ARMRequest request = null;
         Class cls          = null;
         String action      = null;
+        List<Evt> starting_cbs = null;
         List<Response> success_cbs = null;
         List<Error> error_cbs      = null;
         Object resp        = null;
-        Throwable exc      = null;
+        Exception exc      = null;
         Object arg         = null;
 
         Req() {
+            this.starting_cbs = new ArrayList<Evt>();
             this.success_cbs = new ArrayList<Response>();
             this.error_cbs   = new ArrayList<Error>();
+        }
+
+
+        public void started() {
+            for ( int i = 0; i < this.starting_cbs.size(); i++ )
+                this.starting_cbs.get(i).callback();
         }
 
         public void success(Object obj) {
@@ -92,7 +151,7 @@ public class Payload {
                 this.success_cbs.get(i).callback(obj);
         }
 
-        public void failure(Throwable err) {
+        public void failure(Exception err) {
             for ( int i = 0; i < this.error_cbs.size(); i++ )
                 this.error_cbs.get(i).callback(err);
         }
@@ -157,12 +216,22 @@ public class Payload {
         return new Form(view, obj).submit();
     }
 
-    private static class Run extends AsyncTask<Req, Void, Req> {
+    static public GooglePay googlepay(View view, ARMObject obj) {
+        Req req = new Req();
+        req.action = "create";
+        req.obj = obj;
+        GooglePay gpay = new GooglePay(req, view);
+        gpay.possiblyShowGooglePayButton();
+        return gpay;
+    }
+
+    public static class Run extends AsyncTask<Req, Void, Req> {
         @Override
         protected Req doInBackground(Req... requests) {
             Req req = requests[0];
             req.resp = null;
             req.exc = null;
+            req.started();
 
             try {
                 Method action = null;
@@ -205,7 +274,7 @@ public class Payload {
                 req.resp = resp;
                 return req;
             } catch ( Exception exc ) {
-                req.exc = exc.getCause();
+                req.exc = (Exception)exc.getCause();
                 return req;
             }
         }
@@ -226,40 +295,6 @@ public class Payload {
 
     }
 
-    public static class PaymentPromise<T> extends BasePromise<T> {
-        List<Response> processed_cbs;
-        List<Response> declined_cbs;
-
-        public PaymentPromise(Req req) {
-            super(req);
-
-            this.processed_cbs = new ArrayList<Response>();
-            this.declined_cbs = new ArrayList<Response>();
-
-            this.then((pl.Payment pmt) -> {
-                if (pmt.getStr("status").equals("processed")) {
-                    for ( int i = 0; i < this.processed_cbs.size(); i++ )
-                        this.processed_cbs.get(i).callback(pmt);
-                }
-
-                if (pmt.getStr("status").equals("declined"))  {
-                    for ( int i = 0; i < this.declined_cbs.size(); i++ )
-                        this.declined_cbs.get(i).callback(pmt);
-                }
-            });
-        }
-
-        public T processed(final Response<?> callback) {
-            this.processed_cbs.add(callback);
-            return (T)this;
-        }
-
-        public T declined(final Response<?> callback) {
-            this.declined_cbs.add(callback);
-            return (T)this;
-        }
-
-    }
 
     public static class Checkout extends PaymentPromise<Checkout> {
         public Form form;
@@ -285,7 +320,7 @@ public class Payload {
                     Checkout.this.success(payment);
                 }).processed((pl.Payment payment) -> {
                     Checkout.this.checkout_dialog.dismiss();
-                }).error((Throwable err) -> {
+                }).error((Exception err) -> {
                     Checkout.this.failure(err);
                 });
         }
@@ -332,7 +367,7 @@ public class Payload {
             this.req.obj = obj;
             this.req.action = "create";
 
-            this.error((Throwable err) -> {
+            this.error((Exception err) -> {
                 if (err instanceof Exceptions.InvalidAttributes)
                     handleInvalidAttributes((Exceptions.InvalidAttributes)err);
             });
