@@ -118,7 +118,7 @@ Payload.create(new pl.Payment(){{
 ### Void a Payment
 
 ```java
-// Create a Payment
+// Void a Payment
 Payload.update(payment, pl.attr("status", "voided") )
     .then((pl.Payment voided) -> {
         handleVoid(payment);
